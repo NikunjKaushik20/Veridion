@@ -2,7 +2,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Line, OrbitControls, Stars, useTexture } from "@react-three/drei";
 import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
 import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
-import { ArrowUpRight, Menu, Pause, Play, Volume2, X } from "lucide-react";
+import { ArrowUpRight, Menu, Pause, Play, Volume2, VolumeX, X } from "lucide-react";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { nodes, stages } from "./data";
@@ -311,9 +311,33 @@ export function App({ onEnter }: { onEnter?: () => void }) {
   const [running, setRunning] = useState(false);
   const [explore, setExplore] = useState(false);
   const [menu, setMenu] = useState(false);
+  const [soundOn, setSoundOn] = useState(false);
   const [apiStages, setApiStages] = useState<any[] | null>(null);
   const [sourceCount, setSourceCount] = useState(0);
   const [snapshotData, setSnapshotData] = useState<any | null>(null);
+
+  const toggleSound = () => {
+    const next = !soundOn;
+    setSoundOn(next);
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioCtx) {
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(next ? 587.33 : 293.66, ctx.currentTime);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.35);
+      }
+    } catch {
+      // Graceful fallback
+    }
+  };
 
   useEffect(() => smoothProgress.on("change", setProgress), [smoothProgress]);
   useEffect(() => {
@@ -373,6 +397,9 @@ export function App({ onEnter }: { onEnter?: () => void }) {
           <a href="#method">Method</a>
           <a href="#network">Network</a>
           <a href="#access">Access</a>
+          <button className="primary" style={{ padding: "6px 14px", fontSize: "12px", borderRadius: "100px", display: "inline-flex", alignItems: "center", gap: "4px" }} onClick={onEnter}>
+            Dashboard <ArrowUpRight size={14} />
+          </button>
         </div>
         <button
           className="menu-button"
@@ -384,9 +411,12 @@ export function App({ onEnter }: { onEnter?: () => void }) {
       </nav>
       {menu && (
         <div className="mobile-menu">
-          <a href="#method">Method</a>
-          <a href="#network">Network</a>
-          <a href="#access">Access</a>
+          <a href="#method" onClick={() => setMenu(false)}>Method</a>
+          <a href="#network" onClick={() => setMenu(false)}>Network</a>
+          <a href="#access" onClick={() => setMenu(false)}>Access</a>
+          <button className="primary" style={{ padding: "8px 16px", fontSize: "13px" }} onClick={() => { setMenu(false); onEnter?.(); }}>
+            Launch Dashboard <ArrowUpRight size={14} />
+          </button>
         </div>
       )}
       <motion.section
@@ -421,6 +451,9 @@ export function App({ onEnter }: { onEnter?: () => void }) {
             )}{" "}
             {running ? "Pause trace" : "Run the trace"}
           </button>
+          <button className="primary" style={{ background: "rgba(224, 214, 184, 0.12)", border: "1px solid rgba(224, 214, 184, 0.25)", color: "#e0d6b8" }} onClick={onEnter}>
+            Open Dashboard <ArrowUpRight size={15} />
+          </button>
           <button className="text-button" onClick={() => setExplore(!explore)}>
             {explore ? "Exit exploration" : "Explore the network"}{" "}
             <ArrowUpRight size={16} />
@@ -435,7 +468,7 @@ export function App({ onEnter }: { onEnter?: () => void }) {
         {stageData.map((item, index) => (
           <section
             className="stage-space"
-            id={index === 2 ? "network" : undefined}
+            id={index === 0 ? "method" : index === 2 ? "network" : undefined}
             key={item.id}
           />
         ))}
@@ -473,8 +506,13 @@ export function App({ onEnter }: { onEnter?: () => void }) {
           </strong>
         </aside>
       )}
-      <button className="sound" aria-label="Toggle sound">
-        <Volume2 size={16} />
+      <button 
+        className={`sound ${soundOn ? "active" : ""}`} 
+        onClick={toggleSound} 
+        aria-label="Toggle sound"
+        style={{ cursor: "pointer" }}
+      >
+        {soundOn ? <Volume2 size={16} /> : <VolumeX size={16} />}
       </button>
       {explore && (
         <div className="explore-label">
