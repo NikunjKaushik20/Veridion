@@ -107,7 +107,8 @@ a {
   flex-direction: column;
   pointer-events: none;
 }
-.hero > * {
+.hero > *,
+.closing > * {
   pointer-events: auto;
 }
 .eyebrow {

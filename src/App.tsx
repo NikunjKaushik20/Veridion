@@ -316,6 +316,15 @@ export function App({ onEnter }: { onEnter?: () => void }) {
   const [sourceCount, setSourceCount] = useState(0);
   const [snapshotData, setSnapshotData] = useState<any | null>(null);
 
+  const handleEnter = () => {
+    if (onEnter) {
+      onEnter();
+    } else {
+      window.history.pushState({}, "", "/dashboard");
+      window.dispatchEvent(new Event("popstate"));
+    }
+  };
+
   const toggleSound = () => {
     const next = !soundOn;
     setSoundOn(next);
@@ -397,7 +406,7 @@ export function App({ onEnter }: { onEnter?: () => void }) {
           <a href="#method">Method</a>
           <a href="#network">Network</a>
           <a href="#access">Access</a>
-          <button className="primary" style={{ padding: "6px 14px", fontSize: "12px", borderRadius: "100px", display: "inline-flex", alignItems: "center", gap: "4px" }} onClick={onEnter}>
+          <button className="primary" style={{ padding: "6px 14px", fontSize: "12px", borderRadius: "100px", display: "inline-flex", alignItems: "center", gap: "4px" }} onClick={handleEnter}>
             Dashboard <ArrowUpRight size={14} />
           </button>
         </div>
@@ -414,7 +423,7 @@ export function App({ onEnter }: { onEnter?: () => void }) {
           <a href="#method" onClick={() => setMenu(false)}>Method</a>
           <a href="#network" onClick={() => setMenu(false)}>Network</a>
           <a href="#access" onClick={() => setMenu(false)}>Access</a>
-          <button className="primary" style={{ padding: "8px 16px", fontSize: "13px" }} onClick={() => { setMenu(false); onEnter?.(); }}>
+          <button className="primary" style={{ padding: "8px 16px", fontSize: "13px" }} onClick={() => { setMenu(false); handleEnter(); }}>
             Launch Dashboard <ArrowUpRight size={14} />
           </button>
         </div>
@@ -523,7 +532,7 @@ export function App({ onEnter }: { onEnter?: () => void }) {
           <br />
           <em>an evidence trail.</em>
         </h2>
-        <button className="primary" onClick={onEnter}>
+        <button className="primary" onClick={handleEnter}>
           Enter the intelligence room <ArrowUpRight size={16} />
         </button>
       </section>
