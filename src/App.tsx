@@ -451,9 +451,6 @@ export function App({ onEnter }: { onEnter?: () => void }) {
             )}{" "}
             {running ? "Pause trace" : "Run the trace"}
           </button>
-          <button className="primary" style={{ background: "rgba(224, 214, 184, 0.12)", border: "1px solid rgba(224, 214, 184, 0.25)", color: "#e0d6b8" }} onClick={onEnter}>
-            Open Dashboard <ArrowUpRight size={15} />
-          </button>
           <button className="text-button" onClick={() => setExplore(!explore)}>
             {explore ? "Exit exploration" : "Explore the network"}{" "}
             <ArrowUpRight size={16} />
