@@ -127,7 +127,7 @@ function TrustNetwork({ progress, liveNodes }: { progress: number; liveNodes?: a
 
 function StageVisual({ stageIndex, snapshot }: { stageIndex: number; snapshot?: any }) {
   const signalProvider = snapshot?.latest_signal?.provider || "NASA EONET";
-  const signalTime = snapshot?.latest_signal?.timestamp || `${new Date().toISOString().slice(11, 19)} UTC`;
+  const signalTime = snapshot?.latest_signal?.timestamp || `${new Date().toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour12: false })} IST`;
 
   const sourcesList = snapshot?.stage2_sources || [
     { name: "NASA EONET", status: "ACTIVE" },
@@ -503,8 +503,8 @@ export function App({ onEnter }: { onEnter?: () => void }) {
       )}
       {panelOpacity > 0.02 && (
         <aside className="telemetry">
-          <span>LIVE UTC</span>
-          <strong>{new Date().toISOString().slice(11, 19)}</strong>
+          <span>LIVE IST</span>
+          <strong>{new Date().toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour12: false })}</strong>
           <i />
           <span>MONITORED</span>
           <strong>

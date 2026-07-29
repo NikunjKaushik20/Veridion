@@ -1124,39 +1124,66 @@ a {
 }
 .dash-layout {
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-columns: 60px minmax(0, 1fr);
   min-height: calc(100vh - 74px);
+  position: relative;
 }
 .dash-nav {
-  border-right: 1px solid rgba(231, 211, 158, 0.1);
-  padding: 38px 20px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  z-index: 25;
+  background: #050707;
+  border-right: 1px solid rgba(231, 211, 158, 0.12);
+  padding: 38px 0;
   display: flex;
   flex-direction: column;
   gap: 5px;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease, box-shadow 0.35s ease;
+}
+.dash-nav:hover {
+  width: 230px;
+  background: #090c0f;
+  box-shadow: 14px 0 40px rgba(0, 0, 0, 0.75);
 }
 .dash-nav > span,
-.dash-eyebrow {
-  font: 9px "DM Mono";
-  letter-spacing: 0.16em;
-  color: #a18d5a;
-  margin: 0;
-  text-transform: uppercase;
+.dash-nav button span,
+.dash-nav-foot {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+.dash-nav:hover > span,
+.dash-nav:hover button span,
+.dash-nav:hover .dash-nav-foot {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.25s 0.08s ease;
 }
 .dash-nav > span {
-  margin: 0 12px 14px;
+  margin: 0 18px 14px;
 }
 .dash-nav button {
   border: 0;
-  border-left: 1px solid transparent;
+  border-left: 2px solid transparent;
   background: transparent;
   color: #898c84;
   font-size: 13px;
   text-align: left;
-  padding: 11px 12px;
+  padding: 11px 18px;
   display: flex;
   align-items: center;
-  gap: 11px;
-  transition: 0.2s;
+  gap: 14px;
+  width: 230px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.dash-nav button svg {
+  flex-shrink: 0;
 }
 .dash-nav button:hover {
   color: #d9d3c7;
@@ -1164,14 +1191,15 @@ a {
 .dash-nav button.active {
   color: #ede9df;
   border-left-color: #dfbe69;
-  background: linear-gradient(90deg, rgba(223, 190, 105, 0.1), transparent);
+  background: linear-gradient(90deg, rgba(223, 190, 105, 0.12), transparent);
 }
 .dash-nav-foot {
   margin-top: auto;
-  padding: 18px 12px 0;
+  padding: 18px 18px 0;
   border-top: 1px solid rgba(231, 211, 158, 0.08);
   display: grid;
   gap: 7px;
+  width: 230px;
 }
 .dash-nav-foot span {
   font: 9px "DM Mono";
@@ -1184,6 +1212,7 @@ a {
   color: #bcb9b0;
 }
 .dash-content {
+  grid-column: 2;
   padding: 42px 4.2vw 60px;
   min-width: 0;
 }

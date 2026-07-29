@@ -144,10 +144,11 @@ def get_story_snapshot(db: Session = Depends(get_db)):
         .order_by(models.Observation.timestamp.desc())
         .first()
     )
+    ist_now = datetime.datetime.utcnow() + datetime.timedelta(hours=5, minutes=30)
     latest_time_str = (
-        latest_obs.timestamp.strftime("%H:%M:%S UTC")
+        (latest_obs.timestamp + datetime.timedelta(hours=5, minutes=30)).strftime("%H:%M:%S IST")
         if latest_obs and latest_obs.timestamp
-        else datetime.datetime.utcnow().strftime("%H:%M:%S UTC")
+        else ist_now.strftime("%H:%M:%S IST")
     )
     latest_provider = (
         db.query(models.Source)

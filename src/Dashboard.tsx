@@ -477,7 +477,7 @@ export function Dashboard({ onBack }: { onBack: () => void }) {
         </button>
         <div className="dash-header-status">
           <i /> TRUST ENGINE ONLINE{" "}
-          <b>UTC {new Date().toISOString().slice(11, 19)}</b>
+          <b>IST {new Date().toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour12: false })}</b>
           {provenance && (
             <span className="dash-header-real">
               {provenance.total_real_observations} REAL OBS
@@ -504,7 +504,7 @@ export function Dashboard({ onBack }: { onBack: () => void }) {
               onClick={() => setActiveView(item.key)}
             >
               <item.icon size={15} />
-              {item.label}
+              <span>{item.label}</span>
             </button>
           ))}
           <div className="dash-nav-foot">
