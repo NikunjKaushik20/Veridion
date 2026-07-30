@@ -1,5 +1,7 @@
 # 🌌 Veridion — Trust Engine & Ledger for Space & Geospatial Intelligence
 
+A trust-scoring engine for geospatial observations — combines Bayesian statistics, graph-based reputation, drift detection, and collusion discounting into an explainable trust score.
+
 <p align="center">
   <img src="https://img.shields.io/badge/XOVIAN%20AEROSPACE-Problem%20Statement%207-00f2fe?style=for-the-badge&logo=nasa&logoColor=white" alt="XOVIAN PS7"/>
   <img src="https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
@@ -15,13 +17,28 @@
 
 ---
 
+## Table of Contents
+
+- [Executive Summary](#-executive-summary)
+- [Mathematical Engine Architecture](#-mathematical-engine-architecture)
+- [Live Ingested Public Datasets](#-live-ingested-public-datasets)
+- [Tech Stack](#-tech-stack)
+- [Installation & Setup Guide](#-step-by-step-installation--setup-guide)
+- [Backend REST API Reference](#-backend-rest-api-reference)
+- [Project Repository Structure](#-project-repository-structure)
+- [Troubleshooting](#-troubleshooting)
+- [Included Documentation Artifacts](#-included-documentation-artifacts)
+- [License](#-license)
+
+---
+
 ## 📌 Executive Summary
 
-Modern decision-makers in defense, disaster response, environmental monitoring, and climate insurance depend heavily on satellite imagery, atmospheric feeds, and geospatial intelligence. However, data from multi-source observations is frequently **delayed, inconsistent, or resold under different provider names**.
+Modern decision-makers in defense, disaster response, environmental monitoring, and climate insurance depend heavily on satellite imagery, atmospheric feeds, and geospatial intelligence. However, [...]
 
-Standard data fusion models (such as naive averaging or majority voting) suffer from a critical flaw: **they assume all sources are independent**. If three "independent" commercial providers are actually reselling the exact same underlying satellite imagery or weather model feed, traditional consensus models over-trust the data due to circular agreement.
+Standard data fusion models (such as naive averaging or majority voting) suffer from a critical flaw: **they assume all sources are independent**. If three "independent" commercial providers are a[...]
 
-**Veridion** is an AI-driven trust-scoring framework that sits between raw geospatial datasets and executive decision-makers. It computes dynamic, explainable trust metrics by combining **graph-based trust propagation with collusion discounting**, **CUSUM sensor calibration drift detection**, and **Bayesian lower-confidence bounds**.
+**Veridion** is an AI-driven trust-scoring framework that sits between raw geospatial datasets and executive decision-makers. It computes dynamic, explainable trust metrics by combining **graph-ba[...]
 
 ---
 
@@ -69,7 +86,7 @@ $$\text{LCB} = \text{Beta}^{-1}(0.05;\, 1 + \text{successes},\, 1 + \text{failur
 *Result:* A new feed with $5/5$ perfect readings is bounded to $\approx 0.57$ trust, whereas an established feed with $27/30$ reaches $\approx 0.78$.
 
 ### 2. Layer 2 — Trust Graph (Personalized PageRank)
-Sources are modeled as nodes in a directional graph ($G$), where edges represent spatial and domain corroboration. To prevent circular bootstrapping attacks, PageRank is personalized toward verified anchor sources:
+Sources are modeled as nodes in a directional graph ($G$), where edges represent spatial and domain corroboration. To prevent circular bootstrapping attacks, PageRank is personalized toward verifi[...]
 $$\mathbf{pr} = \alpha \mathbf{M} \mathbf{pr} + (1 - \alpha) \mathbf{p}$$
 where $\mathbf{p}$ is biased proportional to established observation counts and historical success rates.
 
@@ -103,12 +120,6 @@ Veridion ingests and validates real observations from **8 public APIs** across 7
 | **Space Weather** | **NOAA SWPC** | `services.swpc.noaa.gov/json/planetary_k_index_1m.json` | `space_weather` | No |
 | **Disaster & Hazard** | **USGS Seismic Network**| `earthquake.usgs.gov/fdsnws/event/1/` | `disaster_hazard` | No |
 | **GIS & Mapping** | **OpenStreetMap GIS** | `nominatim.openstreetmap.org/search` | `gis_mapping` | No |
-
-### Transparent Synthetic Disclosures (`is_synthetic=True`)
-To demonstrate how the engine detects critical failure modes during evaluation, **5 synthetic test feeds** are seeded into `trace.db`:
-- **Collusion Ring**: *GeoWatch Analytics*, *FireScope Pro*, *SatGuard Intl* (resellers cloning real ECMWF feeds).
-- **Drifting Sensor**: *NOAA GOES-16 (degraded)* (injected progressive CUSUM thermal bias).
-- **Lucky Streak**: *Orbital Insight (new)* (5 sparse observations demonstrating Wilson LCB bound).
 
 ---
 
@@ -273,11 +284,11 @@ The backend includes cached responses in `backend/data_cache/`. If offline, `pyt
 
 ## 📜 Included Documentation Artifacts
 
-- **[PS7_Trust_Ledger_Summary.md](file:///d:/Hacks/Emerging_Tech/PS7_Trust_Ledger_Summary.md)**: In-depth technical breakdown of all 4 trust layers, mathematical formulations, and evaluation checklist.
-- **[Commercialization_Roadmap.md](file:///d:/Hacks/Emerging_Tech/Commercialization_Roadmap.md)**: Go-to-market strategy across 5 enterprise verticals (Disaster Response, Defense Multi-INT, Insurance, ESG, Agriculture) and 4-phase technical scaling roadmap.
+- **[PS7_Trust_Ledger_Summary.md](file:///d:/Hacks/Emerging_Tech/PS7_Trust_Ledger_Summary.md)**: In-depth technical breakdown of all 4 trust layers, mathematical formulations, and evaluation chec[...]
+- **[Commercialization_Roadmap.md](file:///d:/Hacks/Emerging_Tech/Commercialization_Roadmap.md)**: Go-to-market strategy across 5 enterprise verticals (Disaster Response, Defense Multi-INT, Insur[...]
 
 ---
 
 ## 📄 License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details. Built for the **Emerging Technologies Hackathon 2026** for **XOVIAN AEROSPACE Problem Statement 7**.
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details. Built for the **Emerging Technologies Hackathon 2026** for **XOVIAN AEROSPACE Problem Statement[...]
