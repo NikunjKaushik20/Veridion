@@ -27,7 +27,7 @@ type Source = {
   id: number;
   provider_name: string;
   instrument: string;
-  status: "active" | "drifting" | "discounted";
+  status: "active" | "drifting" | "discounted" | "excluded" | string;
   trust_score: number;
   evidence: string;
   is_synthetic?: boolean;
@@ -36,7 +36,7 @@ type Source = {
 type GraphNode = {
   id: string;
   label: string;
-  status: "active" | "drifting" | "discounted";
+  status: "active" | "drifting" | "discounted" | "excluded" | string;
   trust_score: number;
   instrument: string;
   lineage?: string | null;
@@ -50,18 +50,22 @@ type GraphLink = {
   type: "collusion" | "corroboration";
 };
 
-const tone = (status: GraphNode["status"]) =>
+const tone = (status: string) =>
   status === "active"
     ? "#a9b173"
     : status === "drifting"
       ? "#dfb75d"
-      : "#d25e40";
-const statusLabel = (status: GraphNode["status"]) =>
+      : status === "discounted"
+        ? "#d25e40"
+        : "#555850";
+const statusLabel = (status: string) =>
   status === "active"
     ? "VERIFIED"
     : status === "drifting"
       ? "DRIFT WATCH"
-      : "DISCOUNTED";
+      : status === "discounted"
+        ? "DISCOUNTED"
+        : "EXCLUDED";
 
 // The graph lives in a fixed SVG coordinate system.  Keeping these anchors in
 // one place makes the whole topology easy to position without altering its
@@ -803,17 +807,26 @@ export function Dashboard({ onBack }: { onBack: () => void }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {sources.filter((source) => {
-                        if (filterFamily === "all") return true;
-                        if (filterFamily === "synthetic") return source.is_synthetic;
-                        return source.data_family === filterFamily && !source.is_synthetic;
-                      }).map((source) => {
-                        const excluded = excludedIds.has(source.id);
-                        return (
-                          <tr
-                            key={source.id}
-                            className={excluded ? "excluded" : ""}
-                          >
+                      {sources
+                        .filter((source) => {
+                          if (filterFamily === "all") return true;
+                          if (filterFamily === "synthetic") return source.is_synthetic;
+                          return source.data_family === filterFamily && !source.is_synthetic;
+                        })
+                        .sort((a, b) => {
+                          const aExcluded = excludedIds.has(a.id) || a.status === "excluded";
+                          const bExcluded = excludedIds.has(b.id) || b.status === "excluded";
+                          if (aExcluded && !bExcluded) return 1;
+                          if (!aExcluded && bExcluded) return -1;
+                          return 0;
+                        })
+                        .map((source) => {
+                          const excluded = excludedIds.has(source.id) || source.status === "excluded";
+                          return (
+                            <tr
+                              key={source.id}
+                              className={excluded ? "excluded" : ""}
+                            >
                             <td>
                               <button
                                 className={`include-toggle ${excluded ? "" : "on"}`}

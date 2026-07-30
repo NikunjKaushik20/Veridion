@@ -55,7 +55,7 @@ def run_trust_engine(db: Session, excluded_source_ids=None, simulate=False):
 
     # Pre-fetch observations once per source
     obs_cache: dict[int, list[Observation]] = {}
-    for s in sources:
+    for s in all_sources:
         obs_cache[s.id] = (
             db.query(Observation)
             .filter(Observation.source_id == s.id)
@@ -305,6 +305,29 @@ def run_trust_engine(db: Session, excluded_source_ids=None, simulate=False):
             "observation_count": n_obs,
             "cusum_peak": cusum_peaks.get(s.id, 0.0),
         })
+
+    for s in all_sources:
+        if s.id in excluded_source_ids:
+            obs = obs_cache.get(s.id, [])
+            results.append({
+                "id": s.id,
+                "provider_name": s.provider_name,
+                "instrument": s.instrument,
+                "lat": s.lat,
+                "lon": s.lon,
+                "status": "excluded",
+                "trust_score": 0.0,
+                "evidence": f"{s.provider_name} excluded — disabled via What-If Simulator",
+                "lineage": s.lineage,
+                "is_synthetic": getattr(s, 'is_synthetic', False),
+                "data_family": getattr(s, 'data_family', None),
+                "lcb": 0.0,
+                "ppr": 0.0,
+                "drift_penalty": 0.0,
+                "collusion_penalty": 0.0,
+                "observation_count": len(obs),
+                "cusum_peak": 0.0,
+            })
 
     if not simulate:
         db.commit()

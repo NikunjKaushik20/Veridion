@@ -130,7 +130,7 @@ def get_story_snapshot(db: Session = Depends(get_db)):
     drifting_cusum = 5.2
     if drifting:
         drifting_name = drifting[0].provider_name
-        drifting_cusum = round(drifting[0].cusum_peak, 2)
+        drifting_cusum = round(getattr(drifting[0], 'cusum_peak', 5.2), 2)
         obs = (
             db.query(models.Observation)
             .filter(models.Observation.source_id == drifting[0].id)
